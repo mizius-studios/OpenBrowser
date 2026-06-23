@@ -8,7 +8,7 @@
 
 <p align="center">
   <img alt="Node.js" src="https://img.shields.io/badge/Node.js-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white">
-  <img alt="Version" src="https://img.shields.io/badge/version-1.9.7-blue?style=flat-square">
+  <img alt="Version" src="https://img.shields.io/badge/version-1.9.8-blue?style=flat-square">
   <img alt="Browser" src="https://img.shields.io/badge/browser-Zen-7F52FF?style=flat-square">
   <img alt="Firefox Extension" src="https://img.shields.io/badge/Firefox-WebExtension-FF7139?style=flat-square&logo=firefoxbrowser&logoColor=white">
 </p>
@@ -25,7 +25,7 @@ The npm package is published as `@pxlarified/browser` and is intended to be used
 npx @pxlarified/browser <command>
 ```
 
-The local agent skill lives in `skills/OpenBrowser/` and is not published as a separate npm skill package.
+The local agent skill lives in `skills/browser/` and can be installed from the npm package.
 
 ## License
 
@@ -70,6 +70,18 @@ The installer does the following.
 4. Replaces an existing staged OpenBrowser extension with the bundled version.
 
 Restart Zen if the extension update does not load immediately.
+
+### Agent skill installation
+
+Install the bundled `browser` skill into a Pi agent directory or an existing `skills` directory.
+
+```sh
+npx @pxlarified/browser install skills --to '.pi/agent/'
+# alias:
+npx @pxlarified/browser install skill --to '.pi/agent/'
+```
+
+If `--to` points at an agent directory such as `.pi/agent`, OpenBrowser writes `.pi/agent/skills/browser/SKILL.md`. If `--to` already points at `.pi/agent/skills`, it writes `.pi/agent/skills/browser/SKILL.md` without appending another `skills` segment.
 
 ## Usage
 
@@ -265,7 +277,7 @@ The package is configured with.
 }
 ```
 
-The npm package includes the CLI, source, extension source, and bundled extension artifacts. It does not publish `.env`, `node_modules`, build scratch files, or the local `skills/` directory.
+The npm package includes the CLI, source, extension source, bundled extension artifacts, and the installable `skills/browser/` skill. It does not publish `.env`, `node_modules`, or build scratch files.
 
 ## Development
 

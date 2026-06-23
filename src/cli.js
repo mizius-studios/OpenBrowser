@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { resolveBrowser, supportedBrowsers } from "./browsers/registry.js";
 import { BridgeUnavailableError, sendBridgeCommandWithRetry } from "./bridge/client.js";
 import { screenshotsDir } from "./util/paths.js";
@@ -16,7 +17,15 @@ export async function runCli(argv) {
   const adapter = resolveBrowser(parsed.browser);
 
   if (command === "install") {
-    const browserName = positionals[0] || parsed.browser;
+    const target = positionals[0];
+    if (target === "skill" || target === "skills") {
+      const result = installBrowserSkill(parsed.flags.get("to"));
+      console.error(result.note);
+      console.log(JSON.stringify(result, null, 2));
+      return;
+    }
+
+    const browserName = target || parsed.browser;
     if (!browserName) throw new Error(`Usage: OpenBrowser install <browser>`);
     const installAdapter = resolveBrowser(browserName);
     const result = await installAdapter.install();
@@ -126,6 +135,25 @@ function requireArgs(name, args, count, request) {
   return request;
 }
 
+function installBrowserSkill(to) {
+  if (!to) throw new Error("Usage: OpenBrowser install skills --to <agent-dir-or-skills-dir>");
+
+  const requested = path.resolve(to);
+  const skillsDir = path.basename(requested) === "skills" ? requested : path.join(requested, "skills");
+  const destination = path.join(skillsDir, "browser");
+  const source = fileURLToPath(new URL("../skills/browser/SKILL.md", import.meta.url));
+
+  fs.mkdirSync(destination, { recursive: true });
+  fs.copyFileSync(source, path.join(destination, "SKILL.md"));
+
+  return {
+    skill: "browser",
+    destination,
+    files: [path.join(destination, "SKILL.md")],
+    note: `Installed browser skill to ${destination}.`,
+  };
+}
+
 async function printResult(request, result) {
   if (request.command === "screenshot") {
     const base64 = normalizeBase64(result.dataUrl || result.base64 || "");
@@ -151,5 +179,5 @@ function normalizeBase64(value) {
 }
 
 function printHelp() {
-  console.log(`OpenBrowser\n\nUsage:\n  OpenBrowser install <browser>\n  OpenBrowser open <url> [--browser zen]\n  OpenBrowser close [--browser zen]\n  OpenBrowser status [--browser zen]\n  OpenBrowser navigate <url> [--browser zen]\n  OpenBrowser reload|back|forward [--browser zen]\n  OpenBrowser state [--browser zen]\n  OpenBrowser screenshot [--base64] [--browser zen]\n  OpenBrowser click <ref> [--browser zen]\n  OpenBrowser keys <text> [--browser zen]\n  OpenBrowser press <key> [--browser zen]\n  OpenBrowser select <ref> <option> [--browser zen]\n  OpenBrowser get --html [--ref <ref>] [--browser zen]\n  OpenBrowser scroll up|down [pixels] [--browser zen]\n  OpenBrowser scroll --to <ref> [--browser zen]\n\nSupported browsers: ${supportedBrowsers().join(", ")}`);
+  console.log(`OpenBrowser\n\nUsage:\n  OpenBrowser install <browser>\n  OpenBrowser install skills --to <agent-dir-or-skills-dir>\n  OpenBrowser open <url> [--browser zen]\n  OpenBrowser close [--browser zen]\n  OpenBrowser status [--browser zen]\n  OpenBrowser navigate <url> [--browser zen]\n  OpenBrowser reload|back|forward [--browser zen]\n  OpenBrowser state [--browser zen]\n  OpenBrowser screenshot [--base64] [--browser zen]\n  OpenBrowser click <ref> [--browser zen]\n  OpenBrowser keys <text> [--browser zen]\n  OpenBrowser press <key> [--browser zen]\n  OpenBrowser select <ref> <option> [--browser zen]\n  OpenBrowser get --html [--ref <ref>] [--browser zen]\n  OpenBrowser scroll up|down [pixels] [--browser zen]\n  OpenBrowser scroll --to <ref> [--browser zen]\n\nSupported browsers: ${supportedBrowsers().join(", ")}`);
 }
