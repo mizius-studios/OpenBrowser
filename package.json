@@ -1,6 +1,6 @@
 {
   "name": "@pxlarified/browser",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "description": "Minimal local browser-control CLI for OpenBrowser.",
   "type": "module",
   "bin": {
@@ -35,5 +35,5 @@
     "web-ext": "^8.3.0",
     "yazl": "^3.3.1"
   },
-  "license": "UNLICENSED"
+  "license": "SEE LICENSE IN LICENSE"
 }

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "OpenBrowser",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "description": "Local user-scoped browser control bridge for the OpenBrowser CLI.",
   "icons": {
     "48": "assets/logo.svg",

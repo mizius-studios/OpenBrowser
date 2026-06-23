@@ -8,7 +8,7 @@
 
 <p align="center">
   <img alt="Node.js" src="https://img.shields.io/badge/Node.js-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white">
-  <img alt="Version" src="https://img.shields.io/badge/version-1.9.5-blue?style=flat-square">
+  <img alt="Version" src="https://img.shields.io/badge/version-1.9.6-blue?style=flat-square">
   <img alt="Browser" src="https://img.shields.io/badge/browser-Zen-7F52FF?style=flat-square">
   <img alt="Firefox Extension" src="https://img.shields.io/badge/Firefox-WebExtension-FF7139?style=flat-square&logo=firefoxbrowser&logoColor=white">
 </p>
@@ -26,6 +26,10 @@ npx @pxlarified/browser <command>
 ```
 
 The local agent skill lives in `skills/OpenBrowser/` and is not published as a separate npm skill package.
+
+## License
+
+This project uses a custom fork-for-pull-request-only license. It grants permission only to fork the repository and make changes for submitting a pull request upstream; no other use, distribution, or derivative-work rights are granted. See [LICENSE](LICENSE).
 
 ## Features
 
