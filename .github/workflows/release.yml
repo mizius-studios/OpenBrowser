@@ -116,7 +116,7 @@ jobs:
 
           cat > release-notes.md <<EOF
           # v${{ steps.version.outputs.version }}
-          See the follow changelog [here](${CHANGELOG_URL}).
+          See the full changelog [here](${CHANGELOG_URL}).
           EOF
 
           echo "tag=${RELEASE_TAG}" >> "$GITHUB_OUTPUT"
