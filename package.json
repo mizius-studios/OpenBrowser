@@ -14,6 +14,7 @@
     "sync:version": "node scripts/sync-version.js",
     "build": "node scripts/build.js firefox",
     "build:firefox": "node scripts/build.js firefox",
+    "test": "node --test coverage/*.test.js",
     "release:firefox": "node scripts/sign-firefox.js",
     "prepack": "npm run build"
   },
