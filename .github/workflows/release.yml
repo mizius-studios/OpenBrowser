@@ -17,6 +17,9 @@ jobs:
   publish:
     name: Build, sign, and publish
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
 
     steps:
       - name: Checkout
@@ -105,7 +108,7 @@ jobs:
 
           SHORT_SHA="$(git rev-parse --short HEAD)"
           RELEASE_TAG="v${{ steps.version.outputs.version }}-${SHORT_SHA}"
-          PREVIOUS_TAG="$(gh release list --exclude-drafts --exclude-pre-releases --limit 1 --json tagName --jq '.[0].tagName // ""')"
+          PREVIOUS_TAG="$(gh release list --repo "${{ github.repository }}" --exclude-drafts --exclude-pre-releases --limit 1 --json tagName --jq '.[0].tagName // ""')"
           REPOSITORY_URL="${{ github.server_url }}/${{ github.repository }}"
 
           if [ -n "$PREVIOUS_TAG" ]; then
@@ -130,10 +133,10 @@ jobs:
 
           echo "tag=${RELEASE_TAG}" >> "$GITHUB_OUTPUT"
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
 
       - name: Create GitHub release
         if: steps.version.outputs.publish == 'true'
-        run: gh release create "${{ steps.github_release.outputs.tag }}" --target "$(git rev-parse HEAD)" --notes-file release-notes.md
+        run: gh release create "${{ steps.github_release.outputs.tag }}" --repo "${{ github.repository }}" --target "$(git rev-parse HEAD)" --notes-file release-notes.md
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
