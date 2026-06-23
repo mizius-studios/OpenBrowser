@@ -22,7 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
           ref: main
 
       - name: Detect version bump
@@ -110,12 +110,21 @@ jobs:
 
           if [ -n "$PREVIOUS_TAG" ]; then
             CHANGELOG_URL="${REPOSITORY_URL}/compare/${PREVIOUS_TAG}...${RELEASE_TAG}"
+            COMMIT_RANGE="${PREVIOUS_TAG}..HEAD"
           else
             CHANGELOG_URL="${REPOSITORY_URL}/commits/${RELEASE_TAG}"
+            COMMIT_RANGE="HEAD"
+          fi
+
+          COMMITS="$(git log --pretty=format:'- `%h` - %s' "$COMMIT_RANGE")"
+          if [ -z "$COMMITS" ]; then
+            COMMITS="- No commits found."
           fi
 
           cat > release-notes.md <<EOF
-          # v${{ steps.version.outputs.version }}
+          ### Commits
+          ${COMMITS}
+
           See the full changelog [here](${CHANGELOG_URL}).
           EOF
 
@@ -125,6 +134,6 @@ jobs:
 
       - name: Create GitHub release
         if: steps.version.outputs.publish == 'true'
-        run: gh release create "${{ steps.github_release.outputs.tag }}" --target "$(git rev-parse HEAD)" --title "v${{ steps.version.outputs.version }}" --notes-file release-notes.md
+        run: gh release create "${{ steps.github_release.outputs.tag }}" --target "$(git rev-parse HEAD)" --notes-file release-notes.md
         env:
           GH_TOKEN: ${{ github.token }}
